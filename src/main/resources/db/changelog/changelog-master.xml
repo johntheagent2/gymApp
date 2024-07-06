@@ -6,4 +6,6 @@
               https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
     <include file="db/changelog/table/create-account-table.xml"/>
     <include file="db/changelog/insert-admin.xml"/>
+    <include file="db/changelog/2024/07/02-01-changelog.xml"/>
+    <include file="db/changelog/2024/07/03-01-changelog.xml"/>
 </databaseChangeLog>

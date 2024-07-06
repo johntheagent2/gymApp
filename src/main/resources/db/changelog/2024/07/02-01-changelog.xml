@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1719924022359-1" author="caoph (generated)">
+        <addColumn tableName="account">
+            <column name="profile_picture" type="BLOB"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="1719924022359-2" author="caoph (generated)">
+        <addUniqueConstraint columnNames="username" constraintName="uc_account_username" tableName="account"/>
+    </changeSet>
+
+</databaseChangeLog>

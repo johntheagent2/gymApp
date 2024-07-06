@@ -9,6 +9,7 @@ import com.example.gymapp.exception.exception.BadCredentialException;
 import com.example.gymapp.service.AccountService;
 import com.example.gymapp.service.AuthenticationService;
 import com.example.gymapp.service.CustomUserDetailFacade;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,6 +26,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AccountService accountService;
 
     @Override
+    @Transactional
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         CustomUserDetails account;
         String jwtToken;

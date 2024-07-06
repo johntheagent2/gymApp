@@ -10,10 +10,15 @@ import com.example.gymapp.repository.AccountRepository;
 import com.example.gymapp.service.AccountService;
 import com.example.gymapp.service.AdminService;
 import com.example.gymapp.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +54,7 @@ public class AccountServiceImpl implements AccountService {
                     request.getUsername(),
                     bCryptPasswordEncoder.encode(request.getPassword()),
                     Role.ADMIN);
+            admin.setProfilePicture("TODO");
             adminService.save(admin);
         }else {
             User user = new User(request.getFirstName(),
@@ -56,6 +62,7 @@ public class AccountServiceImpl implements AccountService {
                     request.getUsername(),
                     bCryptPasswordEncoder.encode(request.getPassword()),
                     Role.USER);
+            user.setProfilePicture("TODO");
             userService.save(user);
         }
     }

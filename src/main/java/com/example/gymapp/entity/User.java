@@ -2,13 +2,13 @@ package com.example.gymapp.entity;
 
 import com.example.gymapp.entity.base.Account;
 import com.example.gymapp.enumeration.Role;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -22,6 +22,9 @@ public class User extends Account {
 
     @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Progression> progressions;
 
     public User(String firstName, String lastName, String username, String password, Role role) {
         super(username, password, role);

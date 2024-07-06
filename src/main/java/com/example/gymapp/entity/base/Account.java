@@ -37,6 +37,9 @@ public class Account{
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "profile_picture", nullable = true)
+    private String profilePicture;
+
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
