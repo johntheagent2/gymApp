@@ -5,11 +5,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class EnumFilter<GiftStatus> {
+public class EnumFilter<TrackingType> {
 
-    private GiftStatus value;
+    private TrackingType value;
 
-    public EnumFilter(GiftStatus value) {
+    public EnumFilter(TrackingType value) {
         this.value = value;
     }
 }

@@ -1,8 +1,8 @@
 package com.example.gymapp.dto.request;
 
+import com.example.gymapp.enumeration.TrackingType;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -17,14 +17,17 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProgressionDto implements Serializable {
+public class ProgressionRequest implements Serializable {
 
     Long id;
 
-    @NotNull(message = "progression.weight.null")
+    @NotNull(message = "progression.type.null")
+    TrackingType trackingType;
+
+    @NotNull(message = "progression.value.null")
     @Min(0)
     @Max(1000)
-    float weight;
+    float value;
 
     LocalDate createdDate;
 }

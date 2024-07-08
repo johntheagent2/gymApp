@@ -1,9 +1,11 @@
 package com.example.gymapp.service.implement;
 
 import com.example.gymapp.common.Global;
-import com.example.gymapp.dto.request.ProgressionDto;
+import com.example.gymapp.dto.request.ProgressionRequest;
+import com.example.gymapp.dto.response.LatestProgressResponse;
 import com.example.gymapp.entity.Progression;
 import com.example.gymapp.entity.User;
+import com.example.gymapp.enumeration.TrackingType;
 import com.example.gymapp.exception.exception.NotFoundException;
 import com.example.gymapp.repository.ProgressionRepository;
 import com.example.gymapp.service.ProgressionService;
@@ -13,10 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -27,13 +26,14 @@ public class ProgressionServiceImpl implements ProgressionService {
     private final UserService userService;
 
     @Override
-    public void addProgression(ProgressionDto progressionDto) {
+    public void addProgression(ProgressionRequest progressionRequest) {
         String username = Global.getCurrentLogin().getUsername();
         Progression progression = new Progression();
-        progression.setWeight(progressionDto.getWeight());
-        progression.setCreatedDate(getLoggedDate(progressionDto.getCreatedDate()));
+        progression.setTrackingType(progressionRequest.getTrackingType());
+        progression.setValue(progressionRequest.getValue());
+        progression.setCreatedDate(getLoggedDate(progressionRequest.getCreatedDate()));
 
-        checkIfLoggedToday(progression.getCreatedDate(), username);
+        checkIfLoggedToday(progression.getCreatedDate(), username, progressionRequest.getTrackingType());
 
         User currentUser = userService.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("authentication.user-name.not-found"));
@@ -42,39 +42,47 @@ public class ProgressionServiceImpl implements ProgressionService {
     }
 
     @Override
-    public void removeProgression(ProgressionDto progressionDto) {
-        progressionRepository.deleteById(progressionDto.getId());
+    public void removeProgression(ProgressionRequest progressionRequest) {
+        progressionRepository.deleteById(progressionRequest.getId());
     }
 
     @Override
-    public void updateProgression(ProgressionDto progressionDto) {
-        Progression progression = progressionRepository.findById(progressionDto.getId())
+    public void updateProgression(ProgressionRequest progressionRequest) {
+        Progression progression = progressionRepository.findById(progressionRequest.getId())
                 .orElseThrow(() -> new NotFoundException("progression.progress.not-found"));
 
-        if(!Objects.isNull(progressionDto.getWeight())){
-            progression.setWeight(progressionDto.getWeight());
-        }
+        progression.setValue(progressionRequest.getValue());
 
-        if(!Objects.isNull(progressionDto.getCreatedDate())){
-            progression.setCreatedDate(progressionDto.getCreatedDate());
+        if(!Objects.isNull(progressionRequest.getCreatedDate())){
+            progression.setCreatedDate(progressionRequest.getCreatedDate());
         }
 
         progressionRepository.save(progression);
     }
 
     @Override
-    public List<ProgressionDto> getProgressionList() {
+    public List<ProgressionRequest> getProgressionList() {
         String username = Global.getCurrentLogin().getUsername();
         return progressionRepository.getProgressionByUser_Username(username)
                 .stream()
                 .map(this::convertToProgressionDto)
-                .sorted(Comparator.comparing(ProgressionDto::getCreatedDate))
+                .sorted(Comparator.comparing(ProgressionRequest::getCreatedDate))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public ProgressionDto getLatestProgression(ProgressionDto progressionDto) {
-        return null;
+    public List<LatestProgressResponse> getLatestProgression() {
+        String username = Global.getCurrentLogin().getUsername();
+
+        List<LatestProgressResponse> allProgressions = progressionRepository.getProgressionByUser_Username(username)
+                .stream()
+                .map(this::convertToLatestProgressionDto)
+                .toList();
+
+        Map<TrackingType, LatestProgressResponse> latestProgressions = new EnumMap<>(TrackingType.class);
+        getLatestForEachType(allProgressions, latestProgressions);
+
+        return new ArrayList<>(latestProgressions.values());
     }
 
     private LocalDate getLoggedDate(LocalDate createdDate){
@@ -85,16 +93,33 @@ public class ProgressionServiceImpl implements ProgressionService {
         }
     }
 
-    private void checkIfLoggedToday(LocalDate createdDate, String username){
-        boolean isLogged = progressionRepository.getProgressionByCreatedDateAndUser_Username(createdDate, username).isPresent();
+    private void checkIfLoggedToday(LocalDate createdDate, String username, TrackingType type){
+        boolean isLogged = progressionRepository.getProgressionByCreatedDateAndUser_UsernameAndTrackingType(createdDate, username, type).isPresent();
         if(isLogged){
             throw new NotFoundException("progression.progress.same-date");
         }
     }
 
-    private ProgressionDto convertToProgressionDto(Progression entity) {
-        ProgressionDto progressionDto = new ProgressionDto();
-        BeanUtils.copyProperties(entity, progressionDto);
-        return progressionDto;
+    private ProgressionRequest convertToProgressionDto(Progression entity) {
+        ProgressionRequest progressionRequest = new ProgressionRequest();
+        BeanUtils.copyProperties(entity, progressionRequest);
+        return progressionRequest;
+    }
+
+    private LatestProgressResponse convertToLatestProgressionDto(Progression entity) {
+        LatestProgressResponse progressionRequest = new LatestProgressResponse();
+        BeanUtils.copyProperties(entity, progressionRequest);
+        return progressionRequest;
+    }
+
+    private Map<TrackingType, LatestProgressResponse> getLatestForEachType(List<LatestProgressResponse> allProgressions, Map<TrackingType, LatestProgressResponse> latestProgressions){
+        for (LatestProgressResponse progression : allProgressions) {
+            TrackingType type = progression.getTrackingType();
+            if (!latestProgressions.containsKey(type) ||
+                    latestProgressions.get(type).getCreatedDate().isBefore(progression.getCreatedDate())) {
+                latestProgressions.put(type, progression);
+            }
+        }
+        return latestProgressions;
     }
 }

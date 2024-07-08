@@ -1,14 +1,16 @@
 package com.example.gymapp.controller.user;
 
-import com.example.gymapp.dto.request.AuthenticationRequest;
-import com.example.gymapp.dto.request.ProgressionDto;
-import com.example.gymapp.dto.response.UserInfoResponse;
+import com.example.gymapp.dto.request.ProgressionRequest;
+import com.example.gymapp.dto.response.LatestProgressResponse;
+import com.example.gymapp.enumeration.TrackingType;
 import com.example.gymapp.service.ProgressionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -19,26 +21,38 @@ public class ProgressionController {
     private final ProgressionService progressionService;
 
     @GetMapping
-    private ResponseEntity<List<ProgressionDto>> getAllProgress(){
-        List<ProgressionDto> progressionDtoList = progressionService.getProgressionList();
-        return ResponseEntity.accepted().body(progressionDtoList);
+    private ResponseEntity<List<ProgressionRequest>> getAllProgress(){
+        List<ProgressionRequest> progressionRequestList = progressionService.getProgressionList();
+        return ResponseEntity.accepted().body(progressionRequestList);
     }
 
     @PostMapping
-    private ResponseEntity<Void> addProgression(@Valid @RequestBody ProgressionDto progressionDto){
-        progressionService.addProgression(progressionDto);
+    private ResponseEntity<Void> addProgression(@Valid @RequestBody ProgressionRequest progressionRequest){
+        progressionService.addProgression(progressionRequest);
         return ResponseEntity.accepted().build();
     }
 
     @PutMapping
-    private ResponseEntity<Void> updateProgression(@Valid @RequestBody ProgressionDto progressionDto){
-        progressionService.updateProgression(progressionDto);
+    private ResponseEntity<Void> updateProgression(@Valid @RequestBody ProgressionRequest progressionRequest){
+        progressionService.updateProgression(progressionRequest);
         return ResponseEntity.accepted().build();
     }
 
     @DeleteMapping
-    private ResponseEntity<Void> deleteProgression(@Valid @RequestBody ProgressionDto progressionDto){
-        progressionService.removeProgression(progressionDto);
+    private ResponseEntity<Void> deleteProgression(@Valid @RequestBody ProgressionRequest progressionRequest){
+        progressionService.removeProgression(progressionRequest);
         return ResponseEntity.accepted().build();
+    }
+
+    @GetMapping("/latest")
+    private ResponseEntity<List<LatestProgressResponse>> getLatestProgress(){
+        List<LatestProgressResponse> responseList = progressionService.getLatestProgression();
+        return ResponseEntity.accepted().body(responseList);
+    }
+
+    @GetMapping("/type")
+    private ResponseEntity<List<TrackingType>> getAllTrackingType(){
+        List<TrackingType> responseList = Arrays.stream(TrackingType.values()).toList();
+        return ResponseEntity.accepted().body(responseList);
     }
 }

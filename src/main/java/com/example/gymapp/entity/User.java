@@ -26,6 +26,9 @@ public class User extends Account {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Progression> progressions;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<History> histories;
+
     public User(String firstName, String lastName, String username, String password, Role role) {
         super(username, password, role);
         this.firstName = firstName;

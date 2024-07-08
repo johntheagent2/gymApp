@@ -1,13 +1,14 @@
 package com.example.gymapp.service;
 
-import com.example.gymapp.dto.request.ProgressionDto;
+import com.example.gymapp.dto.request.ProgressionRequest;
+import com.example.gymapp.dto.response.LatestProgressResponse;
 
 import java.util.List;
 
 public interface ProgressionService {
-    void addProgression(ProgressionDto progressionDto);
-    void removeProgression(ProgressionDto progressionDto);
-    void updateProgression(ProgressionDto progressionDto);
-    List<ProgressionDto> getProgressionList();
-    ProgressionDto getLatestProgression(ProgressionDto progressionDto);
+    void addProgression(ProgressionRequest progressionRequest);
+    void removeProgression(ProgressionRequest progressionRequest);
+    void updateProgression(ProgressionRequest progressionRequest);
+    List<ProgressionRequest> getProgressionList();
+    List<LatestProgressResponse> getLatestProgression();
 }
