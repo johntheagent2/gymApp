@@ -35,21 +35,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
-        final String jwtToken = cookieService.getCookieByName(request, CommonConstant.ACCESS_TOKEN_COOKIE_NAME)
-                .map(Cookie::getValue)
-                .orElse(null);
-        final String refreshToken = cookieService.getCookieByName(request, CommonConstant.REFRESH_TOKEN_COOKIE_NAME)
-                .map(Cookie::getValue)
-                .orElse(null);
+        final String authHeader = request.getHeader("Authorization");
+        final String jwtToken;
         final String email;
 
-        if (jwtToken == null || refreshToken == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         try {
-            email = jwtService.extractEmail(refreshToken);
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            jwtToken = jwtService.extractJwtToken(authHeader);
+            email = jwtService.extractEmail(jwtToken);
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = customUserDetailService.loadUserByUsername(email);
@@ -60,10 +57,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             null,
                             userDetails.getAuthorities()
                     );
-
-                    if(jwtService.isExpired(jwtToken)){
-                        response.addHeader(HttpHeaders.SET_COOKIE, handleExpiredToken(userDetails, refreshToken, request.getServerName()));
-                    }
 
                     authToken.setDetails(new WebAuthenticationDetailsSource()
                             .buildDetails(request));
