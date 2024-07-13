@@ -1,4 +1,4 @@
-package com.example.gymapp.entity.base;
+package com.example.gymapp.entity;
 
 import com.example.gymapp.entity.TrainingLesson;
 import com.example.gymapp.entity.User;
@@ -8,6 +8,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -28,15 +30,21 @@ public class TrainingProgram {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, columnDefinition = "varchar(500)")
     private String description;
 
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private ProgramType type;
 
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
     @Column(name = "start_time")
-    private Instant startTime;
+    private LocalTime startTime;
+
+    @Column(name = "deleted")
+    private boolean deleted;
 
     @ManyToMany(mappedBy = "trainingPrograms", fetch = FetchType.LAZY)
     private List<User> users;

@@ -23,6 +23,9 @@ public class History {
     @Column(name = "exercise", nullable = false)
     private String exercise;
 
+    @Column(name = "calories", nullable = false)
+    private double calories;
+
     @Column(name = "created_date", nullable = false)
     private LocalDate createdDate;
 

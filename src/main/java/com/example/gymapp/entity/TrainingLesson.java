@@ -1,6 +1,5 @@
 package com.example.gymapp.entity;
 
-import com.example.gymapp.entity.base.TrainingProgram;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

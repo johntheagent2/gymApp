@@ -1,7 +1,6 @@
 package com.example.gymapp.entity;
 
 import com.example.gymapp.entity.base.Account;
-import com.example.gymapp.entity.base.TrainingProgram;
 import com.example.gymapp.enumeration.Role;
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -28,5 +28,7 @@ public class TrainingProgramCreationRequest {
     @NotEmpty(message = "training-program.type.null")
     private String type;
 
+    private String startDate;
+
     private String startTime;
 }

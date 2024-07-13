@@ -17,10 +17,11 @@ import java.time.Instant;
 public class TrainingProgramActionRequest {
     @NotNull
     @NotEmpty
-    private String id;
+    private Long id;
 
     private String title;
     private String description;
     private ProgramType type;
-    private Instant startTime;
+    private String startDate;
+    private String startTime;
 }
