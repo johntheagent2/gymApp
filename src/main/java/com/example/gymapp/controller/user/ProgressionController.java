@@ -1,5 +1,6 @@
 package com.example.gymapp.controller.user;
 
+import com.example.gymapp.dto.request.ProgressionLatestRequest;
 import com.example.gymapp.dto.request.ProgressionRequest;
 import com.example.gymapp.dto.response.LatestProgressResponse;
 import com.example.gymapp.enumeration.TrackingType;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,6 +19,11 @@ import java.util.List;
 public class ProgressionController {
 
     private final ProgressionService progressionService;
+
+    @GetMapping("/latest")
+    private ResponseEntity<LatestProgressResponse> getLatestProgressType(@RequestBody ProgressionLatestRequest type){
+        return ResponseEntity.accepted().body(progressionService.getLatestProgression(type));
+    }
 
     @GetMapping
     private ResponseEntity<List<ProgressionRequest>> getAllProgress(){
@@ -44,9 +49,9 @@ public class ProgressionController {
         return ResponseEntity.accepted().build();
     }
 
-    @GetMapping("/latest")
+    @GetMapping("/latest/list")
     private ResponseEntity<List<LatestProgressResponse>> getLatestProgress(){
-        List<LatestProgressResponse> responseList = progressionService.getLatestProgression();
+        List<LatestProgressResponse> responseList = progressionService.getLatestProgressionList();
         return ResponseEntity.accepted().body(responseList);
     }
 
@@ -55,4 +60,5 @@ public class ProgressionController {
         List<TrackingType> responseList = Arrays.stream(TrackingType.values()).toList();
         return ResponseEntity.accepted().body(responseList);
     }
+
 }

@@ -1,6 +1,7 @@
 package com.example.gymapp.service.implement;
 
 import com.example.gymapp.common.Global;
+import com.example.gymapp.dto.request.ProgressionLatestRequest;
 import com.example.gymapp.dto.request.ProgressionRequest;
 import com.example.gymapp.dto.response.LatestProgressResponse;
 import com.example.gymapp.entity.Progression;
@@ -71,7 +72,16 @@ public class ProgressionServiceImpl implements ProgressionService {
     }
 
     @Override
-    public List<LatestProgressResponse> getLatestProgression() {
+    public LatestProgressResponse getLatestProgression(ProgressionLatestRequest type) {
+        String username = Global.getCurrentLogin().getUsername();
+        return progressionRepository
+                .getProgressionByUsernameAndTrackingTypeAndCreatedDateMax(username, type.getType())
+                .map(this::convertToLatestProgressionDto)
+                .orElseGet(() -> LatestProgressResponse.builder().build());
+    }
+
+    @Override
+    public List<LatestProgressResponse> getLatestProgressionList() {
         String username = Global.getCurrentLogin().getUsername();
 
         List<LatestProgressResponse> allProgressions = progressionRepository.getProgressionByUser_Username(username)

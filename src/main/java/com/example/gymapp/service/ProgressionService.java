@@ -1,5 +1,6 @@
 package com.example.gymapp.service;
 
+import com.example.gymapp.dto.request.ProgressionLatestRequest;
 import com.example.gymapp.dto.request.ProgressionRequest;
 import com.example.gymapp.dto.response.LatestProgressResponse;
 
@@ -10,5 +11,6 @@ public interface ProgressionService {
     void removeProgression(ProgressionRequest progressionRequest);
     void updateProgression(ProgressionRequest progressionRequest);
     List<ProgressionRequest> getProgressionList();
-    List<LatestProgressResponse> getLatestProgression();
+    LatestProgressResponse getLatestProgression(ProgressionLatestRequest type);
+    List<LatestProgressResponse> getLatestProgressionList();
 }
