@@ -25,6 +25,7 @@ public class Progression {
     private float value;
 
     @Column(name = "tracking_type", nullable = false)
+    @Enumerated(EnumType.STRING)
     private TrackingType trackingType;
 
     @Column(name = "created_date", nullable = false)

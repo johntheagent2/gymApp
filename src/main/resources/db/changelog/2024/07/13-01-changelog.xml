@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1720859191985-3" author="caoph (generated)">
+        <createSequence incrementBy="1" sequenceName="training_lesson_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet id="1720859191985-4" author="caoph (generated)">
+        <createSequence incrementBy="1" sequenceName="training_program_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet id="1720859191985-5" author="caoph (generated)">
+        <createTable tableName="training_lesson">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_training_lesson"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(500)"/>
+            <column name="url" type="VARCHAR(255)"/>
+            <column name="training_program_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1720859191985-6" author="caoph (generated)">
+        <createTable tableName="training_program">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_training_program"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_time" type="DATETIME"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1720859191985-7" author="caoph (generated)">
+        <createTable tableName="user_training_program">
+            <column name="program_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1720859191985-8" author="caoph (generated)">
+        <addForeignKeyConstraint baseColumnNames="training_program_id" baseTableName="training_lesson"
+                                 constraintName="FK_TRAINING_LESSON_ON_TRAINING_PROGRAM" referencedColumnNames="id"
+                                 referencedTableName="training_program"/>
+    </changeSet>
+    <changeSet id="1720859191985-9" author="caoph (generated)">
+        <addForeignKeyConstraint baseColumnNames="program_id" baseTableName="user_training_program"
+                                 constraintName="fk_usetrapro_on_training_program" referencedColumnNames="id"
+                                 referencedTableName="training_program"/>
+    </changeSet>
+    <changeSet id="1720859191985-10" author="caoph (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_training_program"
+                                 constraintName="fk_usetrapro_on_user" referencedColumnNames="id"
+                                 referencedTableName="user_account"/>
+    </changeSet>
+    <changeSet id="1720859191985-1" author="caoph (generated)">
+        <dropColumn columnName="tracking_type" tableName="progression"/>
+    </changeSet>
+    <changeSet id="1720859191985-2" author="caoph (generated)">
+        <addColumn tableName="progression">
+            <column name="tracking_type" type="VARCHAR(255)">
+                <constraints nullable="false" validateNullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

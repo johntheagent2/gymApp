@@ -1,6 +1,7 @@
 package com.example.gymapp.entity;
 
 import com.example.gymapp.entity.base.Account;
+import com.example.gymapp.entity.base.TrainingProgram;
 import com.example.gymapp.enumeration.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -28,6 +29,14 @@ public class User extends Account {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<History> histories;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_training_program",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "program_id")
+    )
+    private List<TrainingProgram> trainingPrograms;
 
     public User(String firstName, String lastName, String username, String password, Role role) {
         super(username, password, role);
