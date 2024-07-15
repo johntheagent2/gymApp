@@ -23,6 +23,9 @@ public class User extends Account {
     @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
 
+    @Column(name = "gender", nullable = false, length = 10)
+    private String gender;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Progression> progressions;
 
@@ -37,9 +40,10 @@ public class User extends Account {
     )
     private List<TrainingProgram> trainingPrograms;
 
-    public User(String firstName, String lastName, String username, String password, Role role) {
+    public User(String firstName, String lastName, String gender, String username, String password, Role role) {
         super(username, password, role);
         this.firstName = firstName;
         this.lastName = lastName;
+        this.gender = gender;
     }
 }

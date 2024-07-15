@@ -59,6 +59,7 @@ public class AccountServiceImpl implements AccountService {
         }else {
             User user = new User(request.getFirstName(),
                     request.getLastName(),
+                    request.getGender(),
                     request.getUsername(),
                     bCryptPasswordEncoder.encode(request.getPassword()),
                     Role.USER);

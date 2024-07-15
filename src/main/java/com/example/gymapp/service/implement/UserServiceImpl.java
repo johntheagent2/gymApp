@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService {
                 .map(userAccount -> UserInfoResponse.builder()
                         .firstName(userAccount.getFirstName())
                         .lastName(userAccount.getLastName())
+                        .gender(userAccount.getGender())
                         .profilePicture(userAccount.getProfilePicture())
                         .build())
                 .orElseThrow(() -> new NotFoundException("user.username.username-not-found"));

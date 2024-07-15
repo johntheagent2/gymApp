@@ -25,6 +25,10 @@ public class RegistrationRequest {
     @NotEmpty(message = "registration.user-name.not-found")
     private String username;
 
+    @NotNull(message = "registration.gender.not-found")
+    @NotEmpty(message = "registration.gender.not-found")
+    private String gender;
+
     @NotNull(message = "registration.password.not-found")
     @Length(min = 8, max = 16, message = "registration.password.length")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$",
