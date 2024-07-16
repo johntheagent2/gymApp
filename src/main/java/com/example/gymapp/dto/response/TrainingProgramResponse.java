@@ -1,5 +1,6 @@
 package com.example.gymapp.dto.response;
 
+import com.example.gymapp.entity.TrainingLesson;
 import com.example.gymapp.enumeration.ProgramType;
 import com.example.gymapp.enumeration.TrackingType;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -21,4 +23,5 @@ public class TrainingProgramResponse {
     ProgramType type;
     LocalDate startDate;
     LocalTime startTime;
+    List<TrainingLessonResponse> trainingLessons;
 }

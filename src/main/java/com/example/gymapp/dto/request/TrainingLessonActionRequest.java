@@ -18,7 +18,7 @@ import java.time.Instant;
 public class TrainingLessonActionRequest {
     private Long id;
 
-    private Long program_id;
+    private Long programId;
 
     @NotNull(message = "registration.first-name.not-found")
     @NotEmpty(message = "registration.first-name.not-found")

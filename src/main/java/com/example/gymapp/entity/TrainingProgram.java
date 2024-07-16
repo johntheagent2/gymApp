@@ -49,6 +49,7 @@ public class TrainingProgram {
     @ManyToMany(mappedBy = "trainingPrograms", fetch = FetchType.LAZY)
     private List<User> users;
 
-    @OneToMany(mappedBy = "trainingProgram", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "trainingProgram", fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TrainingLesson> trainingLessons;
 }

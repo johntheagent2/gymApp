@@ -1,4 +1,4 @@
-package com.example.gymapp.controller.user;
+package com.example.gymapp.controller.admin;
 
 import com.example.gymapp.dto.request.ProgressionRequest;
 import com.example.gymapp.dto.request.TrainingLessonActionRequest;
@@ -19,18 +19,37 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("${user-mapping}/training-program")
+@RequestMapping("${admin-mapping}/training-program")
 @RequiredArgsConstructor
-public class TrainingProgramController {
+public class TrainingProgramPrivateController {
 
     private final TrainingProgramService trainingProgramService;
+
+    @PostMapping
+    private ResponseEntity<List<ProgressionRequest>> createProgram(
+            @Validated @RequestBody TrainingProgramCreationRequest request){
+        trainingProgramService.createProgram(request);
+        return ResponseEntity.accepted().build();
+    }
+
+    @PutMapping
+    private ResponseEntity<Void> editProgram(@Validated @RequestBody TrainingProgramActionRequest request){
+        trainingProgramService.editProgram(request);
+        return ResponseEntity.accepted().build();
+    }
+
+    @DeleteMapping
+    private ResponseEntity<Void> deleteProgram(@Validated @RequestBody TrainingProgramActionRequest request){
+        trainingProgramService.deleteProgram(request);
+        return ResponseEntity.accepted().build();
+    }
 
     @GetMapping("/type")
     private ResponseEntity<List<ProgramType>> getAllProgramTypes(){
         return ResponseEntity.accepted().body(Arrays.stream(ProgramType.values()).toList());
     }
 
-    @GetMapping("/all")
+    @GetMapping
     private ResponseEntity<Page<TrainingProgramResponse>> getTrainingPrograms(
             @PageableDefault(size = 5) Pageable page){
         Page<TrainingProgramResponse> trainingProgram = trainingProgramService.getAllTrainingProgram(page);
@@ -53,19 +72,9 @@ public class TrainingProgramController {
         return ResponseEntity.accepted().body(trainingProgram);
     }
 
-    @PutMapping("/save/{id}")
-    private ResponseEntity<Page<TrainingProgramResponse>> subscribeTrainingProgram(@PathVariable long id){
-        trainingProgramService.subscribeTrainingProgram(id);
+    @PutMapping("/add-lesson")
+    private ResponseEntity<Void> addTrainingLesson(@RequestBody TrainingLessonActionRequest request){
+        trainingProgramService.addTrainingLesson(request);
         return ResponseEntity.accepted().build();
-    }
-
-    @GetMapping("/{id}")
-    private ResponseEntity<TrainingProgramResponse> getTrainingProgram(@PathVariable long id){
-        return ResponseEntity.accepted().body(trainingProgramService.getTrainingProgram(id));
-    }
-
-    @GetMapping()
-    private ResponseEntity<List<TrainingProgramResponse>> getUserTrainingPrograms(){
-        return ResponseEntity.accepted().body(trainingProgramService.getTrainingProgramList());
     }
 }

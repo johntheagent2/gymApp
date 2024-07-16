@@ -1,15 +1,15 @@
 package com.example.gymapp.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "training_lesson")
+@AllArgsConstructor
 public class TrainingLesson {
 
     @Id

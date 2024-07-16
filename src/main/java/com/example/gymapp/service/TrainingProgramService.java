@@ -8,6 +8,8 @@ import com.example.gymapp.enumeration.ProgramType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface TrainingProgramService {
 
     void createProgram(TrainingProgramCreationRequest request);
@@ -21,4 +23,10 @@ public interface TrainingProgramService {
     Page<TrainingProgramResponse> getAllTrainingByType(Pageable page, ProgramType type);
 
     void addTrainingLesson(TrainingLessonActionRequest request);
+
+    void subscribeTrainingProgram(Long id);
+
+    TrainingProgramResponse getTrainingProgram(Long id);
+
+    List<TrainingProgramResponse> getTrainingProgramList();
 }
