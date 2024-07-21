@@ -31,6 +31,13 @@ public class HistoryServiceImpl implements HistoryService {
     private final UserService userService;
 
     @Override
+    public HistoryResponse getHistory(Long id) {
+        return historyRepository.findById(id)
+                .map(this::convertToHistoryResponse)
+                .orElseThrow(() -> new NotFoundException("history.entity.not-found"));
+    }
+
+    @Override
     public void addHistory(HistoryRequest historyRequest) {
         String username = Global.getCurrentLogin().getUsername();
         History history = new History();

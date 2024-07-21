@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface HistoryService {
 
+    HistoryResponse getHistory(Long id);
     void addHistory(HistoryRequest historyRequest);
     void removeHistory(HistoryRequest historyRequest);
     void updateHistory(HistoryRequest historyRequest);
