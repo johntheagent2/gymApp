@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @NoArgsConstructor
 @Getter
@@ -28,6 +29,9 @@ public class History {
 
     @Column(name = "created_date", nullable = false)
     private LocalDate createdDate;
+
+    @Column(name = "created_time", nullable = false)
+    private LocalTime createdTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

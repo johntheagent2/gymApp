@@ -32,7 +32,7 @@ public class ProgressionServiceImpl implements ProgressionService {
         Progression progression = new Progression();
         progression.setTrackingType(progressionRequest.getTrackingType());
         progression.setValue(progressionRequest.getValue());
-        progression.setCreatedDate(getLoggedDate(progressionRequest.getCreatedDate()));
+        progression.setCreatedDate(Global.getLoggedDate(progressionRequest.getCreatedDate()));
 
         checkIfLoggedToday(progression.getCreatedDate(), username, progressionRequest.getTrackingType());
 
@@ -93,14 +93,6 @@ public class ProgressionServiceImpl implements ProgressionService {
         getLatestForEachType(allProgressions, latestProgressions);
 
         return new ArrayList<>(latestProgressions.values());
-    }
-
-    private LocalDate getLoggedDate(LocalDate createdDate){
-        if(Objects.isNull(createdDate)){
-            return LocalDate.now();
-        }else{
-            return createdDate;
-        }
     }
 
     private void checkIfLoggedToday(LocalDate createdDate, String username, TrackingType type){
