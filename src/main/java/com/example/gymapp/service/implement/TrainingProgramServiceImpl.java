@@ -6,9 +6,9 @@ import com.example.gymapp.dto.request.TrainingProgramActionRequest;
 import com.example.gymapp.dto.request.TrainingProgramCreationRequest;
 import com.example.gymapp.dto.response.TrainingLessonResponse;
 import com.example.gymapp.dto.response.TrainingProgramResponse;
-import com.example.gymapp.entity.TrainingLesson;
-import com.example.gymapp.entity.TrainingProgram;
-import com.example.gymapp.entity.User;
+import com.example.gymapp.entity.*;
+import com.example.gymapp.entity.criteria.EnumFilter;
+import com.example.gymapp.entity.criteria.TrainingProgramCriteria;
 import com.example.gymapp.enumeration.ProgramType;
 import com.example.gymapp.exception.exception.BadRequestException;
 import com.example.gymapp.exception.exception.NotFoundException;
@@ -16,11 +16,16 @@ import com.example.gymapp.repository.TrainingLessonRepository;
 import com.example.gymapp.repository.TrainingProgramRepository;
 import com.example.gymapp.service.TrainingProgramService;
 import com.example.gymapp.service.UserService;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tech.jhipster.service.QueryService;
+import tech.jhipster.service.filter.LocalDateFilter;
+import tech.jhipster.service.filter.StringFilter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -30,7 +35,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class TrainingProgramServiceImpl implements TrainingProgramService {
+public class TrainingProgramServiceImpl extends QueryService<TrainingProgram> implements TrainingProgramService {
 
     private final TrainingProgramRepository trainingProgramRepository;
     private final TrainingLessonRepository trainingLessonRepository;
@@ -86,14 +91,19 @@ public class TrainingProgramServiceImpl implements TrainingProgramService {
     }
 
     @Override
-    public Page<TrainingProgramResponse> getAllTrainingProgram(Pageable page) {
-        return convertToPageTrainingProgramResponse(trainingProgramRepository.getTrainingProgramsNotDeleted(page));
+    public Page<TrainingProgramResponse> getAllTrainingProgram(TrainingProgramCriteria request, Pageable page) {
+        Page<TrainingProgram> result = getFilterProgram(request, page);
+        return toPageTrainingProgramResponse(result);
     }
 
     @Override
-    public Page<TrainingProgramResponse> getAllTrainingByType(Pageable page, ProgramType type) {
-        return convertToPageTrainingProgramResponse(
-                trainingProgramRepository.getTrainingProgramsByTypeAndNotDeleted(page, type));
+    public Page<TrainingProgramResponse> getAllTrainingByType(TrainingProgramCriteria request,
+                                                              Pageable page, ProgramType type) {
+        request.setProgramType(
+                (TrainingProgramCriteria.ProgramTypeFilter) new TrainingProgramCriteria
+                        .ProgramTypeFilter().setEquals(type));
+        Page<TrainingProgram> result = getFilterProgram(request, page);
+        return toPageTrainingProgramResponse(result);
     }
 
     @Override
@@ -128,13 +138,10 @@ public class TrainingProgramServiceImpl implements TrainingProgramService {
     }
 
     @Override
-    public List<TrainingProgramResponse> getTrainingProgramList() {
-        User user = userService.findByUsername(Global.getCurrentLogin().getUsername())
-                .orElseThrow(() -> new NotFoundException("user.username.not-found"));
-
-        return user.getTrainingPrograms().stream()
-                .map(this::trainingProgramMapper)
-                .toList();
+    @Transactional
+    public Page<TrainingProgramResponse> getTrainingProgramList(TrainingProgramCriteria request, Pageable page) {
+        Page<TrainingProgram> result = getFilterProgram(request, page);
+        return toPageTrainingProgramResponse(result);
     }
 
     private Page<TrainingProgramResponse> convertToPageTrainingProgramResponse(Page<TrainingProgram> request){
@@ -148,12 +155,21 @@ public class TrainingProgramServiceImpl implements TrainingProgramService {
                 .build());
     }
 
+    private boolean filterOfflineOutdatedProgram(TrainingProgram program){
+        ProgramType type = program.getType();
+        if(type.equals(ProgramType.ONLINE) && program.getStartDate().isBefore(LocalDate.now())){
+            return false;
+        }{
+            return true;
+        }
+    }
+
     private TrainingProgram findTrainingProgram(Long id){
         return trainingProgramRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("training-program.program.not-found "));
     }
 
-    TrainingProgramResponse trainingProgramMapper(TrainingProgram program){
+    private TrainingProgramResponse trainingProgramMapper(TrainingProgram program){
         List<TrainingLessonResponse> lessonList = trainingLessonRepository
                 .findByTrainingProgram_Id(program.getId()).stream()
                 .map(lesson -> TrainingLessonResponse.builder()
@@ -173,5 +189,62 @@ public class TrainingProgramServiceImpl implements TrainingProgramService {
                 .startTime(program.getStartTime())
                 .trainingLessons(lessonList)
                 .build();
+    }
+
+    private Page<TrainingProgram> getFilterProgram(TrainingProgramCriteria request, Pageable page){
+        request.setDeleted(false);
+        final Specification<TrainingProgram> specification = createSpecification(request);
+        return trainingProgramRepository.findAll(specification, page);
+    }
+
+    private Page<TrainingProgramResponse> toPageTrainingProgramResponse(Page<TrainingProgram> programs){
+        return programs
+                .map(trainingProgram -> TrainingProgramResponse.builder()
+                        .id(trainingProgram.getId())
+                        .title(trainingProgram.getTitle())
+                        .description(trainingProgram.getDescription())
+                        .type(trainingProgram.getType())
+                        .startDate(trainingProgram.getStartDate())
+                        .startTime(trainingProgram.getStartTime())
+                        .trainingLessons(trainingProgram.getTrainingLessons().stream().map(
+                                trainingLesson -> TrainingLessonResponse.builder()
+                                        .id(trainingLesson.getId())
+                                        .title(trainingLesson.getName())
+                                        .description(trainingLesson.getDescription())
+                                        .url(trainingLesson.getUrl())
+                                        .build()
+                        ).toList())
+                        .build());
+    }
+
+    private Specification<TrainingProgram> createSpecification(TrainingProgramCriteria criteria) {
+        Specification<TrainingProgram> specification = Specification.where(null);
+        if (criteria != null) {
+            if (criteria.getDeleted() != null) {
+                specification = specification.and((root, query, builder) ->
+                        builder.equal(root.get(TrainingProgram_.DELETED), criteria.getDeleted()));
+            }
+            if (criteria.getTitle() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getTitle(), TrainingProgram_.title));
+            }
+            if (criteria.getUserName() != null) {
+                specification = specification.and(buildSpecification(criteria.getUserName(), root ->
+                        root.join(TrainingProgram_.USERS).get(User_.USERNAME)));
+            }
+            if (criteria.getProgramType() != null) {
+                specification = specification.and(buildSpecification(criteria.getProgramType(), TrainingProgram_.type));
+            }
+            if (criteria.getStartDate() != null) {
+                specification = specification.and((root, query, builder) ->
+                        builder.greaterThanOrEqualTo(root.get(TrainingProgram_.START_DATE),
+                                criteria.getStartDate().getGreaterThanOrEqual()));
+            }
+            if (criteria.getCurrentDate() != null) {
+                specification = specification.and((root, query, builder) ->
+                        builder.equal(root.get(TrainingProgram_.START_DATE),
+                                criteria.getCurrentDate().getEquals()));
+            }
+        }
+        return specification;
     }
 }

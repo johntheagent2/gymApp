@@ -5,11 +5,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class EnumFilter<TrackingType> {
+public class EnumFilter<ProgramType> {
 
-    private TrackingType value;
+    private ProgramType value;
 
-    public EnumFilter(TrackingType value) {
+    public EnumFilter(ProgramType value) {
         this.value = value;
     }
 }

@@ -5,6 +5,7 @@ import com.example.gymapp.dto.request.TrainingLessonActionRequest;
 import com.example.gymapp.dto.request.TrainingProgramActionRequest;
 import com.example.gymapp.dto.request.TrainingProgramCreationRequest;
 import com.example.gymapp.dto.response.TrainingProgramResponse;
+import com.example.gymapp.entity.criteria.TrainingProgramCriteria;
 import com.example.gymapp.enumeration.ProgramType;
 import com.example.gymapp.service.TrainingProgramService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class TrainingProgramPrivateController {
     private final TrainingProgramService trainingProgramService;
 
     @PostMapping
-    private ResponseEntity<List<ProgressionRequest>> createProgram(
+    private ResponseEntity<Void> createProgram(
             @Validated @RequestBody TrainingProgramCreationRequest request){
         trainingProgramService.createProgram(request);
         return ResponseEntity.accepted().build();
@@ -50,25 +51,25 @@ public class TrainingProgramPrivateController {
     }
 
     @GetMapping
-    private ResponseEntity<Page<TrainingProgramResponse>> getTrainingPrograms(
-            @PageableDefault(size = 5) Pageable page){
-        Page<TrainingProgramResponse> trainingProgram = trainingProgramService.getAllTrainingProgram(page);
+    private ResponseEntity<Page<TrainingProgramResponse>> getTrainingPrograms(TrainingProgramCriteria request,
+                                                                              @PageableDefault(size = 5) Pageable page){
+        Page<TrainingProgramResponse> trainingProgram = trainingProgramService.getAllTrainingProgram(request, page);
         return ResponseEntity.accepted().body(trainingProgram);
     }
 
     @GetMapping("/offline")
-    private ResponseEntity<Page<TrainingProgramResponse>> getOfflineTrainingPrograms(
+    private ResponseEntity<Page<TrainingProgramResponse>> getOfflineTrainingPrograms(TrainingProgramCriteria request,
             @PageableDefault(size = 5) Pageable page){
         Page<TrainingProgramResponse> trainingProgram =
-                trainingProgramService.getAllTrainingByType(page, ProgramType.OFFLINE);
+                trainingProgramService.getAllTrainingByType(request, page, ProgramType.OFFLINE);
         return ResponseEntity.accepted().body(trainingProgram);
     }
 
     @GetMapping("/online")
-    private ResponseEntity<Page<TrainingProgramResponse>> getOnlineTrainingPrograms(
+    private ResponseEntity<Page<TrainingProgramResponse>> getOnlineTrainingPrograms(TrainingProgramCriteria request,
             @PageableDefault(size = 5) Pageable page){
         Page<TrainingProgramResponse> trainingProgram =
-                trainingProgramService.getAllTrainingByType(page, ProgramType.ONLINE);
+                trainingProgramService.getAllTrainingByType(request, page, ProgramType.ONLINE);
         return ResponseEntity.accepted().body(trainingProgram);
     }
 
