@@ -16,6 +16,5 @@ public class LatestProgressResponse {
     TrackingType trackingType;
     float value;
     LocalDate createdDate;
-
     LocalTime createdTime;
 }

@@ -25,11 +25,6 @@ public class HistoryController {
         return ResponseEntity.accepted().body(historyService.getHistory(id));
     }
 
-    @GetMapping("/all")
-    private ResponseEntity<List<HistoryResponse>> getAllHistory(){
-        return ResponseEntity.accepted().body(historyService.getHistoryList());
-    }
-
     @GetMapping("/this-week")
     private ResponseEntity<HistoryResponseList> getThisWeekHistory(){
         return ResponseEntity.accepted().body(historyService.getHistoryCurrentWeek());
@@ -44,6 +39,11 @@ public class HistoryController {
     private ResponseEntity<Void> addHistory(@Valid @RequestBody HistoryRequest historyRequest){
         historyService.addHistory(historyRequest);
         return ResponseEntity.accepted().build();
+    }
+
+    @GetMapping
+    private ResponseEntity<List<HistoryResponse>> getAllHistory(){
+        return ResponseEntity.accepted().body(historyService.getHistoryList());
     }
 
     @PutMapping
