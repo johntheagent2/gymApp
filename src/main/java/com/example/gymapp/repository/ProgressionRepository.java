@@ -21,6 +21,11 @@ public interface ProgressionRepository extends JpaRepository<Progression, Long> 
             "AND p.createdDate = " +
             "(SELECT MAX(p2.createdDate) FROM Progression p2 " +
             "WHERE p2.user.username = :username " +
-            "AND p2.trackingType = :type)")
-    Optional<Progression> getProgressionByUsernameAndTrackingTypeAndCreatedDateMax(String username, TrackingType type);
+            "AND p2.trackingType = :type) " +
+            "AND p.createdTime = " +
+            "(SELECT MAX(p3.createdTime) FROM Progression p3 " +
+            "WHERE p3.user.username = :username " +
+            "AND p3.trackingType = :type " +
+            "AND p3.createdDate = p.createdDate)")
+    Optional<Progression> getProgressionByUsernameAndTrackingTypeAndCreatedDateTimeMax(String username, TrackingType type);
 }

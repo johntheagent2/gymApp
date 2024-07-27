@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,10 +30,11 @@ public class ProgressionServiceImpl implements ProgressionService {
     @Override
     public void addProgression(ProgressionRequest progressionRequest) {
         String username = Global.getCurrentLogin().getUsername();
-        Progression progression = new Progression();
-        progression.setTrackingType(progressionRequest.getTrackingType());
-        progression.setValue(progressionRequest.getValue());
-        progression.setCreatedDate(Global.getLoggedDate(progressionRequest.getCreatedDate()));
+        Progression progression = Progression.builder()
+                .trackingType(progressionRequest.getTrackingType())
+                .value(progressionRequest.getValue())
+                .createdDate(Global.getLoggedDate(progressionRequest.getCreatedDate()))
+                .createdTime(LocalTime.now()).build();
 
         checkIfLoggedToday(progression.getCreatedDate(), username, progressionRequest.getTrackingType());
 
@@ -75,7 +77,7 @@ public class ProgressionServiceImpl implements ProgressionService {
     public LatestProgressResponse getLatestProgression(ProgressionLatestRequest type) {
         String username = Global.getCurrentLogin().getUsername();
         return progressionRepository
-                .getProgressionByUsernameAndTrackingTypeAndCreatedDateMax(username, type.getType())
+                .getProgressionByUsernameAndTrackingTypeAndCreatedDateTimeMax(username, type.getType())
                 .map(this::convertToLatestProgressionDto)
                 .orElseGet(() -> LatestProgressResponse.builder().build());
     }
@@ -89,10 +91,10 @@ public class ProgressionServiceImpl implements ProgressionService {
                 .map(this::convertToLatestProgressionDto)
                 .toList();
 
-        Map<TrackingType, LatestProgressResponse> latestProgressions = new EnumMap<>(TrackingType.class);
-        getLatestForEachType(allProgressions, latestProgressions);
+        Map<TrackingType, LatestProgressResponse> latestProgression = new EnumMap<>(TrackingType.class);
+        getLatestForEachType(allProgressions, latestProgression);
 
-        return new ArrayList<>(latestProgressions.values());
+        return new ArrayList<>(latestProgression.values());
     }
 
     private void checkIfLoggedToday(LocalDate createdDate, String username, TrackingType type){
@@ -114,14 +116,20 @@ public class ProgressionServiceImpl implements ProgressionService {
         return progressionRequest;
     }
 
-    private Map<TrackingType, LatestProgressResponse> getLatestForEachType(List<LatestProgressResponse> allProgressions, Map<TrackingType, LatestProgressResponse> latestProgressions){
+    private void getLatestForEachType(List<LatestProgressResponse> allProgressions, Map<TrackingType, LatestProgressResponse> latestProgressions) {
         for (LatestProgressResponse progression : allProgressions) {
             TrackingType type = progression.getTrackingType();
-            if (!latestProgressions.containsKey(type) ||
-                    latestProgressions.get(type).getCreatedDate().isBefore(progression.getCreatedDate())) {
+            if (!latestProgressions.containsKey(type)) {
                 latestProgressions.put(type, progression);
+            } else {
+                LatestProgressResponse existingProgression = latestProgressions.get(type);
+                if (existingProgression.getCreatedDate().isBefore(progression.getCreatedDate()) ||
+                        (existingProgression.getCreatedDate().isEqual(progression.getCreatedDate()) &&
+                                existingProgression.getCreatedTime().isBefore(progression.getCreatedTime()))) {
+                    latestProgressions.put(type, progression);
+                }
             }
         }
-        return latestProgressions;
     }
+
 }

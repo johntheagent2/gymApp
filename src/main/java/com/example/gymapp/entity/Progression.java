@@ -2,12 +2,13 @@ package com.example.gymapp.entity;
 
 import com.example.gymapp.enumeration.TrackingType;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -30,6 +31,9 @@ public class Progression {
 
     @Column(name = "created_date", nullable = false)
     private LocalDate createdDate;
+
+    @Column(name = "created_time")
+    private LocalTime createdTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

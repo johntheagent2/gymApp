@@ -24,7 +24,7 @@ public class HistoryRequest {
     @NotNull(message = "progression.value.null")
     @Min(0)
     @Max(1000)
-    private double calories;
+    private float calories;
 
     private LocalDate createdDate;
 

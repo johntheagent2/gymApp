@@ -18,4 +18,6 @@ public interface HistoryRepository extends JpaRepository<History, Long> {
     List<History> findHistoriesWithinCurrentWeek(
             @Param("startOfWeek") LocalDate startOfWeek,
             @Param("endOfWeek") LocalDate endOfWeek);
+
+    List<History> findHistoryByCreatedDate(LocalDate createdDate);
 }

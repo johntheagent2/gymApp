@@ -20,9 +20,24 @@ public class HistoryController {
 
     private final HistoryService historyService;
 
-    @GetMapping
-    private ResponseEntity<HistoryResponse> getThisWeekHistory(@RequestParam Long id){
+    @GetMapping("/{id}")
+    private ResponseEntity<HistoryResponse> getHistoryWithId(@PathVariable Long id){
         return ResponseEntity.accepted().body(historyService.getHistory(id));
+    }
+
+    @GetMapping("/all")
+    private ResponseEntity<List<HistoryResponse>> getAllHistory(){
+        return ResponseEntity.accepted().body(historyService.getHistoryList());
+    }
+
+    @GetMapping("/this-week")
+    private ResponseEntity<HistoryResponseList> getThisWeekHistory(){
+        return ResponseEntity.accepted().body(historyService.getHistoryCurrentWeek());
+    }
+
+    @GetMapping("/today")
+    private ResponseEntity<HistoryResponseList> getTodayWorkoutHistory(){
+        return ResponseEntity.accepted().body(historyService.getTodayWorkoutHistory());
     }
 
     @PostMapping
@@ -41,15 +56,5 @@ public class HistoryController {
     private ResponseEntity<Void> removeHistory(@Valid @RequestBody HistoryRequest historyRequest){
         historyService.removeHistory(historyRequest);
         return ResponseEntity.accepted().build();
-    }
-
-    @GetMapping("/all")
-    private ResponseEntity<List<HistoryResponse>> getAllHistory(){
-        return ResponseEntity.accepted().body(historyService.getHistoryList());
-    }
-
-    @GetMapping("/date")
-    private ResponseEntity<HistoryResponseList> getThisWeekHistory(@RequestParam String request){
-        return ResponseEntity.accepted().body(historyService.getHistoryCurrentWeek(request));
     }
 }

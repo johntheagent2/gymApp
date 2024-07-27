@@ -15,7 +15,8 @@ public interface HistoryService {
     void removeHistory(HistoryRequest historyRequest);
     void updateHistory(HistoryRequest historyRequest);
     List<HistoryResponse> getHistoryList();
-    HistoryResponseList getHistoryCurrentWeek(String request);
+    HistoryResponseList getHistoryCurrentWeek();
+    HistoryResponseList getTodayWorkoutHistory();
     LatestProgressResponse getLatestHistory();
     List<LatestProgressResponse> getLatestHistoryList();
 }

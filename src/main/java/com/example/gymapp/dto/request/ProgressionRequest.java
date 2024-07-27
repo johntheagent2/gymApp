@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  * DTO for {@link com.example.gymapp.entity.Progression}
@@ -30,4 +31,7 @@ public class ProgressionRequest implements Serializable {
     float value;
 
     LocalDate createdDate;
+
+    LocalTime createdTime;;
+
 }
