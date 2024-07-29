@@ -48,7 +48,7 @@ public class TrainingProgramServiceImpl extends QueryService<TrainingProgram> im
             startTime = LocalTime.parse(request.getStartTime());
         }
 
-        LocalDate startDate = LocalDate.parse("2002-04-17");
+        LocalDate startDate = LocalDate.parse("2099-01-01");
         if(Objects.equals(request.getType(), ProgramType.OFFLINE.name())){
             startDate = LocalDate.parse(request.getStartDate());
         }
