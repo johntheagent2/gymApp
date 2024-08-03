@@ -40,6 +40,9 @@ public class User extends Account {
     )
     private List<TrainingProgram> trainingPrograms;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<FoodNutrition> foodNutritions;
+
     public User(String firstName, String lastName, String gender, String username, String password, Role role) {
         super(username, password, role);
         this.firstName = firstName;
