@@ -3,6 +3,7 @@ package com.example.gymapp.service.implement;
 import com.example.gymapp.common.Global;
 import com.example.gymapp.dto.request.NutritionListRequest;
 import com.example.gymapp.dto.response.LatestProgressResponse;
+import com.example.gymapp.dto.response.NutritionDetailsResponse;
 import com.example.gymapp.dto.response.NutritionFoodResponse;
 import com.example.gymapp.dto.response.NutritionResponse;
 import com.example.gymapp.entity.FoodNutrition;
@@ -15,6 +16,10 @@ import com.example.gymapp.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -86,6 +91,28 @@ public class FoodNutritionServiceImpl implements FoodNutritionService {
     @Override
     public void deleteNutrition(Long id) {
         foodNutritionRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<NutritionDetailsResponse> getAllLoggedList(Pageable pageable) {
+        String username = Global.getCurrentLogin().getUsername();
+
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                Sort.by(Sort.Order.desc("createdDate"),
+                        Sort.Order.asc("createdTime")));
+
+        return foodNutritionRepository.findAllByUser_Username(username, sortedPageable)
+                .map(foodNutrition -> NutritionDetailsResponse.builder()
+                        .id(foodNutrition.getId())
+                        .name(foodNutrition.getFoodName())
+                        .calories(foodNutrition.getCalories())
+                        .protein(foodNutrition.getProtein())
+                        .fat(foodNutrition.getFat())
+                        .carbohydrates(foodNutrition.getCarbohydrates())
+                        .meal(foodNutrition.getMeal())
+                        .createdDate(foodNutrition.getCreatedDate())
+                        .createdTime(foodNutrition.getCreatedTime())
+                        .build());
     }
 
     @Override

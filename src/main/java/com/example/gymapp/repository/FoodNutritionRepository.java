@@ -2,6 +2,8 @@ package com.example.gymapp.repository;
 
 import com.example.gymapp.entity.FoodNutrition;
 import com.example.gymapp.entity.History;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +28,6 @@ public interface FoodNutritionRepository extends JpaRepository<FoodNutrition, Lo
     List<FoodNutrition> findTodayMeals(
             @Param("username") String username,
             @Param("createdDate") LocalDate createdDate);
+
+    Page<FoodNutrition> findAllByUser_Username(String username, Pageable pageable);
 }
