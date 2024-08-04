@@ -14,10 +14,12 @@ import com.example.gymapp.exception.exception.BadRequestException;
 import com.example.gymapp.exception.exception.NotFoundException;
 import com.example.gymapp.repository.TrainingLessonRepository;
 import com.example.gymapp.repository.TrainingProgramRepository;
+import com.example.gymapp.service.S3Service;
 import com.example.gymapp.service.TrainingProgramService;
 import com.example.gymapp.service.UserService;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,9 +39,12 @@ import java.util.Objects;
 @Transactional
 public class TrainingProgramServiceImpl extends QueryService<TrainingProgram> implements TrainingProgramService {
 
+    @Value("${s3-url}")
+    private String url;
     private final TrainingProgramRepository trainingProgramRepository;
     private final TrainingLessonRepository trainingLessonRepository;
     private final UserService userService;
+    private final S3Service s3Service;
 
     @Override
     public void createProgram(TrainingProgramCreationRequest request) {
@@ -106,15 +111,17 @@ public class TrainingProgramServiceImpl extends QueryService<TrainingProgram> im
         return toPageTrainingProgramResponse(result);
     }
 
+    @Transactional
     @Override
     public void addTrainingLesson(TrainingLessonActionRequest request) {
+        String saveUrl = url + s3Service.uploadFile(request.getFile());
         TrainingProgram trainingProgram = findTrainingProgram(request.getProgramId());
 
         TrainingLesson trainingLesson = TrainingLesson.builder()
                 .name(request.getName())
                 .description(request.getDescription())
-                .url(request.getUrl())
-                .trainingProgram(trainingProgram) // Set the trainingProgram field
+                .url(saveUrl)
+                .trainingProgram(trainingProgram)
                 .build();
 
         trainingProgram.getTrainingLessons().add(trainingLesson);
@@ -142,6 +149,14 @@ public class TrainingProgramServiceImpl extends QueryService<TrainingProgram> im
     public Page<TrainingProgramResponse> getTrainingProgramList(TrainingProgramCriteria request, Pageable page) {
         Page<TrainingProgram> result = getFilterProgram(request, page);
         return toPageTrainingProgramResponse(result);
+    }
+
+    @Override
+    public void deleteVideo(Long id) {
+        TrainingLesson lesson = trainingLessonRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException(""));
+        String file = lesson.getUrl().substring(lesson.getUrl().lastIndexOf('/') + 1);
+        s3Service.removeFile(lesson.getUrl());
     }
 
     private Page<TrainingProgramResponse> convertToPageTrainingProgramResponse(Page<TrainingProgram> request){

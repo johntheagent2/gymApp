@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
 
@@ -28,7 +29,7 @@ public class TrainingLessonActionRequest {
     @NotEmpty(message = "registration.first-name.not-found")
     private String description;
 
-    @NotNull(message = "registration.first-name.not-found")
-    @NotEmpty(message = "registration.first-name.not-found")
     private String url;
+
+    private MultipartFile file;
 }

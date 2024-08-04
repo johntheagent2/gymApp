@@ -32,4 +32,6 @@ public interface TrainingProgramService {
     TrainingProgramResponse getTrainingProgram(Long id);
 
     Page<TrainingProgramResponse> getTrainingProgramList(TrainingProgramCriteria request, Pageable page);
+
+    void deleteVideo(Long id);
 }
