@@ -1,8 +1,6 @@
 package com.example.gymapp.dto.request;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
@@ -34,4 +32,9 @@ public class RegistrationRequest {
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$",
             message = "registration.password.pattern")
     private String password;
+
+    @NotNull(message = "registration.age.not-found")
+    @Min(value = 13, message = "registration.age.min")
+    @Max(value = 99, message = "registration.age.max")
+    private Integer age;
 }

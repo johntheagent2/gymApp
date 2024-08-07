@@ -26,6 +26,15 @@ public class User extends Account {
     @Column(name = "gender", nullable = false, length = 10)
     private String gender;
 
+    @Column(name = "age", nullable = false, length = 10)
+    private Integer age;
+
+    @Column(name = "weight")
+    private Double weight;
+
+    @Column(name = "height")
+    private Double height;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Progression> progressions;
 
@@ -43,10 +52,12 @@ public class User extends Account {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<FoodNutrition> foodNutritions;
 
-    public User(String firstName, String lastName, String gender, String username, String password, Role role) {
+    public User(String firstName, String lastName, String gender, Integer age,
+                String username, String password, Role role) {
         super(username, password, role);
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
+        this.age = age;
     }
 }
