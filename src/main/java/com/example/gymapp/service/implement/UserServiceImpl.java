@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
                         .firstName(userAccount.getFirstName())
                         .lastName(userAccount.getLastName())
                         .gender(userAccount.getGender())
-                        .age(userAccount.getBrithYear())
+                        .birthYear((userAccount.getBrithYear()))
                         .weight(userAccount.getWeight())
                         .height(userAccount.getHeight())
                         .profilePicture(userAccount.getProfilePicture())
