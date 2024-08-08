@@ -33,8 +33,6 @@ public class RegistrationRequest {
             message = "registration.password.pattern")
     private String password;
 
-    @NotNull(message = "registration.age.not-found")
-    @Min(value = 13, message = "registration.age.min")
-    @Max(value = 99, message = "registration.age.max")
-    private Integer age;
+    @NotNull(message = "registration.birthYear.not-found")
+    private Integer birthYear;
 }

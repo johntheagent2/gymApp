@@ -16,6 +16,16 @@ public class NutritionFoodResponse {
     private double protein;
     private double fat;
     private double carbohydrates;
+
+    private double dailyCalories;
+    private double dailyProtein;
+    private double dailyFat;
+    private double dailyCarbohydrates;
+
+    private double weeklyCalories;
+    private double weeklyProtein;
+    private double weeklyFat;
+    private double weeklyCarbohydrates;
     private List<MealNutrition> mealNutritionList;
 
     @Getter
