@@ -122,16 +122,18 @@ public class FoodNutritionServiceImpl implements FoodNutritionService {
         LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
         String username = Global.getCurrentLogin().getUsername();
 
+        User user = userService.findByUsername(username).orElseThrow();
         List<FoodNutrition> foodNutritionList = foodNutritionRepository
                 .findByCurrentWeek(username, startOfWeek, endOfWeek);
 
-        return toThisWeekNutritionFoodResponse(foodNutritionList);
+        return toThisWeekNutritionFoodResponse(foodNutritionList, user);
     }
 
     @Override
     public NutritionFoodResponse getTodayMealNutrition() {
         String username = Global.getCurrentLogin().getUsername();
         List<FoodNutrition> foodNutritionList = foodNutritionRepository.findTodayMeals(username, LocalDate.now());
+        User user = userService.findByUsername(username).orElseThrow();
 
         if (foodNutritionList.isEmpty()) {
             return null;
@@ -148,13 +150,17 @@ public class FoodNutritionServiceImpl implements FoodNutritionService {
                 .collect(Collectors.toList());
 
         return NutritionFoodResponse.builder()
+                .dailyCalories(user.getTargetCalories())
+                .dailyProtein(user.getTargetProtein())
+                .dailyFat(user.getTargetFat())
+                .dailyCarbohydrates(user.getTargetCarbs())
                 .mealNutritionList(mealNutritionList)
                 .build();
     }
 
 
 
-    private NutritionFoodResponse toThisWeekNutritionFoodResponse(List<FoodNutrition> foodNutritionList) {
+    private NutritionFoodResponse toThisWeekNutritionFoodResponse(List<FoodNutrition> foodNutritionList, User user) {
         double totalCalories = 0;
         double totalProtein = 0;
         double totalFat = 0;
@@ -172,6 +178,10 @@ public class FoodNutritionServiceImpl implements FoodNutritionService {
                 .protein(round(totalProtein, 2))
                 .fat(round(totalFat, 2))
                 .carbohydrates(round(totalCarbohydrates, 2))
+                .weeklyCalories(user.getTargetCalories() * 7)
+                .weeklyProtein(user.getTargetProtein() * 7)
+                .weeklyFat(user.getTargetFat() * 7)
+                .weeklyCarbohydrates(user.getTargetCarbs() * 7)
                 .build();
     }
 

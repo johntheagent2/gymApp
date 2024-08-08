@@ -60,6 +60,7 @@ public class AccountServiceImpl implements AccountService {
             User user = new User(request.getFirstName(),
                     request.getLastName(),
                     request.getGender(),
+                    request.getBirthYear(),
                     request.getUsername(),
                     bCryptPasswordEncoder.encode(request.getPassword()),
                     Role.USER);

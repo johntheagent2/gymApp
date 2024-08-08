@@ -1,5 +1,6 @@
 package com.example.gymapp.service;
 
+import com.example.gymapp.dto.request.UserTargetRequest;
 import com.example.gymapp.dto.response.UserInfoResponse;
 import com.example.gymapp.entity.User;
 
@@ -19,7 +20,9 @@ public interface UserService {
 
     List<User> findAll();
 
-    User updateUser(User user);
+    void updateUserTarget(UserTargetRequest user);
+
+    boolean isUserHaveTarget();
 
     void deleteUser(Long id);
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1723126594370-2" author="caoph (generated)">
+        <addColumn tableName="user_account">
+            <column name="birth_year" type="INT"/>
+            <column name="daily_target_calories" type="DOUBLE"/>
+            <column name="daily_target_carbs" type="DOUBLE"/>
+            <column name="daily_target_fat" type="DOUBLE"/>
+            <column name="daily_target_protein" type="DOUBLE"/>
+            <column name="height" type="DOUBLE"/>
+            <column name="weight" type="DOUBLE"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>
