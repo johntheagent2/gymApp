@@ -41,8 +41,8 @@ public class FoodNutritionController {
     }
 
     @GetMapping("/today")
-    public ResponseEntity<List<NutritionFoodResponse.MealNutrition>> getTodayNutrition(){
-        return ResponseEntity.ok(foodNutritionService.getTodayMealNutrition().getMealNutritionList());
+    public ResponseEntity<NutritionFoodResponse> getTodayNutrition(){
+        return ResponseEntity.ok(foodNutritionService.getTodayMealNutrition());
     }
 
     @GetMapping("/this-week")
