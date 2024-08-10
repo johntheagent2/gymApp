@@ -15,8 +15,6 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TrainingProgramActionRequest {
-    @NotNull
-    @NotEmpty
     private Long id;
 
     private String title;

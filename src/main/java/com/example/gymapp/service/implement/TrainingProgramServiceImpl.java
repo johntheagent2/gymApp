@@ -17,6 +17,7 @@ import com.example.gymapp.repository.TrainingProgramRepository;
 import com.example.gymapp.service.S3Service;
 import com.example.gymapp.service.TrainingProgramService;
 import com.example.gymapp.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -128,6 +129,28 @@ public class TrainingProgramServiceImpl extends QueryService<TrainingProgram> im
         trainingProgramRepository.save(trainingProgram);
     }
 
+    @Override
+    public void editTrainingLesson(TrainingLessonActionRequest request) {
+        TrainingLesson lesson = trainingLessonRepository.findById(request.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Lesson not found"));
+
+        lesson.setName(request.getName());
+        lesson.setDescription(request.getDescription());
+
+        if (request.getFile() != null && !request.getFile().isEmpty()) {
+            String fileUrl = s3Service.uploadFile(request.getFile());
+            lesson.setUrl(fileUrl);
+        }
+
+        trainingLessonRepository.save(lesson);
+    }
+
+
+    @Override
+    public void removeTrainingLesson(Long id) {
+        trainingLessonRepository.deleteById(id);
+    }
+
 
     @Override
     public void subscribeTrainingProgram(Long id) {
@@ -151,12 +174,13 @@ public class TrainingProgramServiceImpl extends QueryService<TrainingProgram> im
         return toPageTrainingProgramResponse(result);
     }
 
+    @Transactional
     @Override
     public void deleteVideo(Long id) {
         TrainingLesson lesson = trainingLessonRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException(""));
         String file = lesson.getUrl().substring(lesson.getUrl().lastIndexOf('/') + 1);
-        s3Service.removeFile(lesson.getUrl());
+        s3Service.removeFile(file);
     }
 
     private Page<TrainingProgramResponse> convertToPageTrainingProgramResponse(Page<TrainingProgram> request){

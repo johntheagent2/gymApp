@@ -21,12 +21,8 @@ public class TrainingLessonActionRequest {
 
     private Long programId;
 
-    @NotNull(message = "registration.first-name.not-found")
-    @NotEmpty(message = "registration.first-name.not-found")
     private String name;
 
-    @NotNull(message = "registration.first-name.not-found")
-    @NotEmpty(message = "registration.first-name.not-found")
     private String description;
 
     private String url;

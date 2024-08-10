@@ -81,6 +81,18 @@ public class TrainingProgramPrivateController {
         return ResponseEntity.accepted().build();
     }
 
+    @PutMapping(value = "/edit-lesson", consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<Void> editTrainingLesson(TrainingLessonActionRequest request){
+        trainingProgramService.editTrainingLesson(request);
+        return ResponseEntity.accepted().build();
+    }
+
+    @DeleteMapping(value = "/delete-lesson/{id}")
+    public ResponseEntity<Void> deleteTrainingLesson(@PathVariable Long id){
+        trainingProgramService.removeTrainingLesson(id);
+        return ResponseEntity.accepted().build();
+    }
+
     @DeleteMapping("delete-video")
     public ResponseEntity<Void> deleteVideo(Long id){
         trainingProgramService.deleteVideo(id);

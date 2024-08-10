@@ -27,6 +27,10 @@ public interface TrainingProgramService {
 
     void addTrainingLesson(TrainingLessonActionRequest request);
 
+    void editTrainingLesson(TrainingLessonActionRequest request);
+
+    void removeTrainingLesson(Long id);
+
     void subscribeTrainingProgram(Long id);
 
     TrainingProgramResponse getTrainingProgram(Long id);
